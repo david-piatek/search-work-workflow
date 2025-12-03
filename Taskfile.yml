@@ -1,0 +1,144 @@
+version: '3'
+
+env:
+  COMPOSE_PROJECT_NAME: job-scraper
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  install:
+    desc: Install all dependencies
+    cmds:
+      - pnpm install
+
+  dev:
+    desc: Start development servers (frontend + backend)
+    deps: [install]
+    cmds:
+      - docker compose -f cloud/docker/compose.yaml up -d postgres redis
+      - pnpm --filter backend dev &
+      - pnpm --filter frontend dev
+
+  dev:backend:
+    desc: Start backend in development mode
+    dir: apps/backend
+    cmds:
+      - pnpm dev
+
+  dev:frontend:
+    desc: Start frontend in development mode
+    dir: apps/frontend
+    cmds:
+      - pnpm dev
+
+  build:
+    desc: Build all applications
+    cmds:
+      - pnpm --filter backend build
+      - pnpm --filter frontend build
+
+  build:backend:
+    desc: Build backend
+    dir: apps/backend
+    cmds:
+      - pnpm build
+
+  build:frontend:
+    desc: Build frontend
+    dir: apps/frontend
+    cmds:
+      - pnpm build
+
+  test:
+    desc: Run all tests
+    cmds:
+      - task test:backend
+      - task test:frontend
+
+  test:backend:
+    desc: Run backend tests
+    dir: apps/backend
+    cmds:
+      - pnpm test
+
+  test:frontend:
+    desc: Run frontend tests
+    dir: apps/frontend
+    cmds:
+      - pnpm test
+
+  test:e2e:
+    desc: Run end-to-end tests
+    dir: apps/frontend
+    cmds:
+      - pnpm test:e2e
+
+  lint:
+    desc: Lint all code
+    cmds:
+      - pnpm --filter backend lint
+      - pnpm --filter frontend lint
+
+  format:
+    desc: Format all code
+    cmds:
+      - pnpm format
+
+  docker:build:
+    desc: Build Docker images
+    cmds:
+      - docker compose -f cloud/docker/compose.yaml build
+
+  docker:up:
+    desc: Start all services with Docker Compose
+    cmds:
+      - docker compose -f cloud/docker/compose.yaml up -d
+
+  docker:down:
+    desc: Stop all Docker services
+    cmds:
+      - docker compose -f cloud/docker/compose.yaml down
+
+  docker:logs:
+    desc: Show Docker logs
+    cmds:
+      - docker compose -f cloud/docker/compose.yaml logs -f
+
+  helm:package:
+    desc: Package Helm chart
+    dir: cloud/helm
+    cmds:
+      - helm package job-scraper-app
+
+  helm:install:
+    desc: Install application with Helm
+    dir: cloud/helm
+    cmds:
+      - helm install job-scraper ./job-scraper-app
+
+  helm:upgrade:
+    desc: Upgrade application with Helm
+    dir: cloud/helm
+    cmds:
+      - helm upgrade job-scraper ./job-scraper-app
+
+  storybook:
+    desc: Start Storybook
+    dir: apps/frontend
+    cmds:
+      - pnpm storybook
+
+  swagger:
+    desc: Generate Swagger documentation
+    cmds:
+      - echo "Swagger available at http://localhost:3000/api"
+
+  clean:
+    desc: Clean all build artifacts and dependencies
+    cmds:
+      - rm -rf node_modules apps/*/node_modules
+      - rm -rf apps/*/dist apps/*/build
+      - rm -rf data scraped-data

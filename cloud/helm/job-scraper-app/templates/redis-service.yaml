@@ -1,0 +1,20 @@
+{{- if .Values.redis.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.redis.name }}-service
+  labels:
+    {{- include "job-scraper-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+spec:
+  type: {{ .Values.redis.service.type }}
+  clusterIP: None
+  ports:
+  - port: {{ .Values.redis.service.port }}
+    targetPort: {{ .Values.redis.service.port }}
+    protocol: TCP
+    name: redis
+  selector:
+    {{- include "job-scraper-app.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+{{- end }}
