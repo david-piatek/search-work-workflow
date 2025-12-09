@@ -1,0 +1,74 @@
+replicaCount:
+  backend: 1
+  frontend: 1
+
+image:
+  backend:
+    repository: registry.gitlab.com/YOUR_GITLAB_USER/search-work-workflow/backend
+    tag: latest
+    pullPolicy: Always
+  frontend:
+    repository: registry.gitlab.com/YOUR_GITLAB_USER/search-work-workflow/frontend
+    tag: latest
+    pullPolicy: Always
+
+imagePullSecrets:
+  - name: gitlab-registry
+
+service:
+  backend:
+    type: ClusterIP
+    port: 3001
+    targetPort: 3001
+  frontend:
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: hello-world.example.com
+      paths:
+        - path: /api
+          pathType: Prefix
+          backend: backend
+        - path: /
+          pathType: Prefix
+          backend: frontend
+  tls:
+    - secretName: hello-world-tls
+      hosts:
+        - hello-world.example.com
+
+resources:
+  backend:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  frontend:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "128Mi"
+      cpu: "200m"
+
+environment: production
+
+healthCheck:
+  backend:
+    path: /
+    initialDelaySeconds: 10
+    periodSeconds: 10
+  frontend:
+    path: /
+    initialDelaySeconds: 5
+    periodSeconds: 10

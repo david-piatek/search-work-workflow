@@ -20,7 +20,7 @@ build-backend:
   before_script:
     - *docker-login
   script:
-    - docker build -f cloud/docker/Dockerfile.backend -t $BACKEND_IMAGE:$CI_COMMIT_SHA -t $BACKEND_IMAGE:latest .
+    - docker build -f cloud/docker/Dockerfile.backend-simple -t $BACKEND_IMAGE:$CI_COMMIT_SHA -t $BACKEND_IMAGE:latest .
     - docker push $BACKEND_IMAGE:$CI_COMMIT_SHA
     - docker push $BACKEND_IMAGE:latest
   only:
@@ -37,7 +37,7 @@ build-frontend:
   before_script:
     - *docker-login
   script:
-    - docker build -f cloud/docker/Dockerfile.frontend -t $FRONTEND_IMAGE:$CI_COMMIT_SHA -t $FRONTEND_IMAGE:latest .
+    - docker build -f cloud/docker/Dockerfile.frontend-simple -t $FRONTEND_IMAGE:$CI_COMMIT_SHA -t $FRONTEND_IMAGE:latest .
     - docker push $FRONTEND_IMAGE:$CI_COMMIT_SHA
     - docker push $FRONTEND_IMAGE:latest
   only:

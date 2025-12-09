@@ -76,6 +76,12 @@ tasks:
     cmds:
       - pnpm test:e2e
 
+  test:letter:
+    desc: Run letter-generator tests
+    dir: apps/letter-generator
+    cmds:
+      - pnpm test
+
   lint:
     desc: Lint all code
     cmds:
@@ -136,9 +142,139 @@ tasks:
     cmds:
       - echo "Swagger available at http://localhost:3000/api"
 
+  letter:install:
+    desc: Install letter-generator dependencies
+    dir: apps/letter-generator
+    cmds:
+      - pnpm install
+
+  letter:generate:
+    desc: Generate letter with example data
+    dir: apps/letter-generator
+    deps: [letter:install]
+    cmds:
+      - mkdir -p output
+      - node src/index.js -t templates/letter-template.html -d templates/example-data.json -o output/letter.pdf
+      - echo "Letter generated at apps/letter-generator/output/letter.pdf"
+
+  letter:generate:elegant:
+    desc: Generate elegant Christmas-themed letter
+    dir: apps/letter-generator
+    deps: [letter:install]
+    cmds:
+      - mkdir -p output
+      - node src/index.js -t templates/letter-christmas-elegant.html -d templates/example-data-christmas.json -o output/letter-christmas-elegant.pdf
+      - echo "Elegant Christmas letter generated at apps/letter-generator/output/letter-christmas-elegant.pdf"
+
+  letter:generate:qr:
+    desc: Generate letter with local QR code generation
+    dir: apps/letter-generator
+    deps: [letter:install, qr:install]
+    cmds:
+      - mkdir -p output
+      - node src/index-qr.js -t templates/letter-christmas-elegant.html -d templates/example-data-christmas-qr.json -o output/letter-with-qr.pdf --elegant
+      - echo "Letter with QR code generated at apps/letter-generator/output/letter-with-qr.pdf"
+
+  letter:generate:custom:
+    desc: Generate letter with custom data (use TEMPLATE, DATA, OUTPUT env vars)
+    dir: apps/letter-generator
+    deps: [letter:install]
+    cmds:
+      - mkdir -p output
+      - node src/index.js -t {{.TEMPLATE}} -d {{.DATA}} -o {{.OUTPUT}}
+
+  letter:docker:build:
+    desc: Build letter-generator Docker image
+    cmds:
+      - docker build -t letter-generator -f cloud/docker/Dockerfile.letter-generator .
+
+  letter:docker:run:
+    desc: Generate letter using Docker
+    cmds:
+      - mkdir -p apps/letter-generator/output
+      - docker run --rm -v $(pwd)/apps/letter-generator/output:/app/output letter-generator -t /app/templates/letter-template.html -d /app/templates/example-data.json -o /app/output/letter.pdf
+      - echo "Letter generated at apps/letter-generator/output/letter.pdf"
+
+  qr:install:
+    desc: Install QR generator dependencies
+    dir: apps/qr-generator
+    cmds:
+      - npm install
+
+  qr:generate:
+    desc: Generate a QR code
+    dir: apps/qr-generator
+    deps: [qr:install]
+    cmds:
+      - mkdir -p output
+      - node src/index.js generate -d "{{.URL}}" -o output/qr-code.png
+      - echo "QR code generated at apps/qr-generator/output/qr-code.png"
+
+  qr:generate:elegant:
+    desc: Generate an elegant QR code
+    dir: apps/qr-generator
+    deps: [qr:install]
+    cmds:
+      - mkdir -p output
+      - node src/index.js elegant -d "{{.URL}}" -o output/elegant-qr.png
+      - echo "Elegant QR code generated at apps/qr-generator/output/elegant-qr.png"
+
+  qr:docker:build:
+    desc: Build QR generator Docker image
+    cmds:
+      - docker build -t qr-generator -f cloud/docker/Dockerfile.qr-generator .
+
+  qr:docker:run:
+    desc: Generate QR code using Docker
+    cmds:
+      - mkdir -p apps/qr-generator/output
+      - docker run --rm -v $(pwd)/apps/qr-generator/output:/app/output qr-generator generate -d "{{.URL}}" -o /app/output/qr-docker.png
+
+  site:install:
+    desc: Install static site generator dependencies
+    dir: apps/static-site
+    cmds:
+      - npm install
+
+  site:generate:
+    desc: Generate static presentation site (elegant style)
+    dir: apps/static-site
+    deps: [site:install]
+    cmds:
+      - node src/index.js generate -d data/example-presentation.json
+      - echo "Static site generated at apps/static-site/output/index.html"
+
+  site:generate:synthwave:
+    desc: Generate static site with synthwave style
+    dir: apps/static-site
+    deps: [site:install]
+    cmds:
+      - node src/index.js generate -d data/synthwave-presentation.json -t templates/synthwave.html
+      - echo "Synthwave site generated at apps/static-site/output/index.html"
+
+  site:generate:custom:
+    desc: Generate site with custom data (use DATA env var)
+    dir: apps/static-site
+    deps: [site:install]
+    cmds:
+      - node src/index.js generate -d {{.DATA}}
+
+  site:serve:
+    desc: Serve static site locally
+    dir: apps/static-site
+    deps: [site:generate]
+    cmds:
+      - npx serve output
+
+  site:open:
+    desc: Open generated site in browser
+    dir: apps/static-site
+    cmds:
+      - open output/index.html
+
   clean:
     desc: Clean all build artifacts and dependencies
     cmds:
       - rm -rf node_modules apps/*/node_modules
       - rm -rf apps/*/dist apps/*/build
-      - rm -rf data scraped-data
+      - rm -rf data scraped-data apps/letter-generator/output apps/qr-generator/output apps/static-site/output

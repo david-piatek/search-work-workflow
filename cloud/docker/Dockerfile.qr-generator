@@ -1,0 +1,25 @@
+# QR Code Generator Service Dockerfile
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY apps/qr-generator/package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy source code
+COPY apps/qr-generator/src ./src
+
+# Create output directory
+RUN mkdir -p /app/output
+
+# Make CLI executable
+RUN chmod +x /app/src/index.js
+
+# Set entrypoint
+ENTRYPOINT ["node", "/app/src/index.js"]
+
+# Default command
+CMD ["--help"]

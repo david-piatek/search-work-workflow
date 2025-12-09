@@ -1,28 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.frontend.name }}
+  name: {{ .Release.Name }}-frontend
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "job-scraper-app.labels" . | nindent 4 }}
-    app.kubernetes.io/component: frontend
+    app: {{ .Release.Name }}
+    component: frontend
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount.frontend }}
   selector:
     matchLabels:
-      {{- include "job-scraper-app.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: frontend
+      app: {{ .Release.Name }}
+      component: frontend
   template:
     metadata:
       labels:
-        {{- include "job-scraper-app.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: frontend
+        app: {{ .Release.Name }}
+        component: frontend
     spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
       containers:
-      - name: {{ .Values.frontend.name }}
-        image: "{{ .Values.image.registry }}/{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+      - name: frontend
+        image: "{{ .Values.image.frontend.repository }}:{{ .Values.image.frontend.tag }}"
+        imagePullPolicy: {{ .Values.image.frontend.pullPolicy }}
         ports:
-        - containerPort: {{ .Values.frontend.service.port }}
+        - name: http
+          containerPort: {{ .Values.service.frontend.targetPort }}
           protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.healthCheck.frontend.path }}
+            port: http
+          initialDelaySeconds: {{ .Values.healthCheck.frontend.initialDelaySeconds }}
+          periodSeconds: {{ .Values.healthCheck.frontend.periodSeconds }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.healthCheck.frontend.path }}
+            port: http
+          initialDelaySeconds: {{ .Values.healthCheck.frontend.initialDelaySeconds }}
+          periodSeconds: {{ .Values.healthCheck.frontend.periodSeconds }}
         resources:
-          {{- toYaml .Values.frontend.resources | nindent 10 }}
+          {{- toYaml .Values.resources.frontend | nindent 12 }}

@@ -23,4 +23,9 @@ export const jobsApi = {
   getStats: () => api.get('/jobs/stats'),
 };
 
+export const workflowApi = {
+  create: (data) => api.post('/workflow/application', data),
+  getStatus: (workflowId) => api.get(`/workflow/application/${workflowId}/status`),
+};
+
 export default api;

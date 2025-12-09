@@ -4,6 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
 import { ScrapersModule } from './scrapers/scrapers.module';
 import { JobsModule } from './jobs/jobs.module';
+import { GeneratorsModule } from './generators/generators.module';
+import { WorkflowModule } from './workflow/workflow.module';
+import { HostingModule } from './hosting/hosting.module';
 
 @Module({
   imports: [
@@ -24,6 +27,9 @@ import { JobsModule } from './jobs/jobs.module';
     }),
     ScrapersModule,
     JobsModule,
+    GeneratorsModule,
+    WorkflowModule,
+    HostingModule,
   ],
 })
 export class AppModule {}

@@ -1,5 +1,9 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
+
   export let jobs = [];
+
+  const dispatch = createEventDispatcher();
 
   function formatDate(dateString) {
     if (!dateString) return 'N/A';
@@ -8,6 +12,10 @@
     } catch {
       return dateString;
     }
+  }
+
+  function handleApply(job) {
+    dispatch('apply', { job });
   }
 </script>
 
@@ -47,11 +55,16 @@
             <span class="date">{formatDate(job.postedDate || job.scrapedAt)}</span>
           </div>
 
-          {#if job.url}
-            <a href={job.url} target="_blank" rel="noopener noreferrer" class="view-link">
-              View Job →
-            </a>
-          {/if}
+          <div class="job-actions">
+            {#if job.url}
+              <a href={job.url} target="_blank" rel="noopener noreferrer" class="view-link">
+                View Job →
+              </a>
+            {/if}
+            <button class="apply-btn" on:click={() => handleApply(job)}>
+              📧 Postuler
+            </button>
+          </div>
         </div>
       {/each}
     </div>
@@ -127,6 +140,16 @@
     margin: 1rem 0;
   }
 
+  .job-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
   .view-link {
     display: inline-block;
     color: #646cff;
@@ -136,6 +159,29 @@
 
   .view-link:hover {
     text-decoration: underline;
+  }
+
+  .apply-btn {
+    padding: 0.5rem 1rem;
+    background: #646cff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .apply-btn:hover {
+    background: #535bf2;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(100, 108, 255, 0.3);
+  }
+
+  .apply-btn:active {
+    transform: translateY(0);
   }
 
   @media (prefers-color-scheme: light) {

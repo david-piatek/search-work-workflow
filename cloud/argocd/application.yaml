@@ -1,22 +1,30 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: job-scraper-app
+  name: job-scraper-hello-world
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
+  
   source:
-    repoURL: https://github.com/YOUR_USERNAME/searc-work-workflow.git
+    repoURL: https://gitlab.com/YOUR_GITLAB_USER/search-work-workflow.git  # À MODIFIER
     targetRevision: HEAD
     path: cloud/helm/job-scraper-app
     helm:
       valueFiles:
-        - values.yaml
+        - values-simple.yaml
+      parameters:
+        - name: image.backend.tag
+          value: latest
+        - name: image.frontend.tag
+          value: latest
+  
   destination:
     server: https://kubernetes.default.svc
     namespace: job-scraper
+  
   syncPolicy:
     automated:
       prune: true
@@ -32,3 +40,5 @@ spec:
         duration: 5s
         factor: 2
         maxDuration: 3m
+  
+  revisionHistoryLimit: 10

@@ -1,99 +1,79 @@
-# ArgoCD Deployment
+# Déploiement ArgoCD + GitLab
 
-## Prerequisites
+✅ **Infrastructure créée :**
+- Helm Chart complet (`cloud/helm/job-scraper-app/`)
+- Application ArgoCD (`cloud/argocd/application.yaml`)
+- GitLab CI/CD configuré (`.gitlab-ci.yml`)
+- Dockerfiles optimisés (`-simple`)
 
-1. ArgoCD installed on your Kubernetes cluster
-2. kubectl configured to access your cluster
-3. Git repository with the Helm charts
+## Quick Start
 
-## Installation
+### 1. Modifier les URLs GitLab
 
-### 1. Update the Git Repository URL
+Éditer `cloud/helm/job-scraper-app/values-simple.yaml` et `cloud/argocd/application.yaml` :
+- Remplacer `YOUR_GITLAB_USER` par votre username GitLab
 
-Edit `application.yaml` and replace `YOUR_USERNAME` with your GitHub username:
-
-```yaml
-repoURL: https://github.com/YOUR_USERNAME/searc-work-workflow.git
-```
-
-### 2. Apply the Application
+### 2. Push vers GitLab
 
 ```bash
-kubectl apply -f argocd/application.yaml
+git add .
+git commit -m "Setup ArgoCD deployment"
+git push origin main
 ```
 
-### 3. Check Application Status
+Le pipeline GitLab va :
+- ✅ Builder les images Docker
+- ✅ Les pusher vers GitLab Container Registry
+
+### 3. Déployer avec ArgoCD
 
 ```bash
-kubectl get applications -n argocd
-argocd app get job-scraper-app
+# Créer le secret pour pull images
+kubectl create namespace job-scraper
+kubectl create secret docker-registry gitlab-registry \
+  --docker-server=registry.gitlab.com \
+  --docker-username=YOUR_USER \
+  --docker-password=YOUR_TOKEN \
+  --namespace=job-scraper
+
+# Déployer l'application
+kubectl apply -f cloud/argocd/application.yaml
+
+# Vérifier
+argocd app get job-scraper-hello-world
+argocd app sync job-scraper-hello-world
 ```
 
-### 4. Sync Application (if not auto-sync)
+### 4. Accéder à l'app
 
 ```bash
-argocd app sync job-scraper-app
+kubectl get ingress -n job-scraper
+curl http://hello-world.example.com
 ```
 
-## Configuration
+## Architecture
 
-### Environment-specific Values
-
-Create environment-specific value files:
-
-```bash
-# Production
-helm/job-scraper-app/values-prod.yaml
-
-# Staging
-helm/job-scraper-app/values-staging.yaml
+```
+GitLab → Build Images → Registry
+                          ↓
+                    ArgoCD sync
+                          ↓
+                   K8s Cluster
+                   (Backend + Frontend)
 ```
 
-Update `application.yaml` to use the appropriate values file:
+## Fichiers importants
 
-```yaml
-helm:
-  valueFiles:
-    - values.yaml
-    - values-prod.yaml
-```
-
-### Secrets Management
-
-For production, use sealed secrets or external secret operators:
-
-```bash
-# Install Sealed Secrets
-kubectl apply -f https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.24.0/controller.yaml
-
-# Create sealed secret
-kubeseal --format yaml < secret.yaml > sealed-secret.yaml
-```
-
-## Monitoring
-
-Access ArgoCD UI:
-
-```bash
-argocd login <ARGOCD_SERVER>
-argocd app list
-argocd app logs job-scraper-app
-```
+- `.gitlab-ci.yml` : Pipeline CI/CD
+- `cloud/docker/Dockerfile.backend-simple` : Image backend
+- `cloud/docker/Dockerfile.frontend-simple` : Image frontend
+- `cloud/helm/job-scraper-app/` : Helm chart
+- `cloud/argocd/application.yaml` : App ArgoCD
 
 ## Troubleshooting
 
-### Check sync status
+Voir les logs :
 ```bash
-argocd app get job-scraper-app --show-operation
-```
-
-### View resources
-```bash
-kubectl get all -n job-scraper
-```
-
-### Check logs
-```bash
-kubectl logs -n job-scraper -l app.kubernetes.io/component=backend
-kubectl logs -n job-scraper -l app.kubernetes.io/component=frontend
+kubectl logs -f deployment/job-scraper-hello-world-backend -n job-scraper
+kubectl logs -f deployment/job-scraper-hello-world-frontend -n job-scraper
 ```

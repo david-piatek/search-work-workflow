@@ -1,0 +1,28 @@
+name: Sync to GitLab
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'hotfix/**'
+
+jobs:
+  sync-to-gitlab:
+    name: Sync to GitLab
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Full history for proper sync
+
+      - name: Push to GitLab
+        uses: saderi/push-to-gitlab@v1
+        with:
+          gitlab_repository: 'gitlab.com/dav.piatek/searc-work-workflow'
+          gitlab_token: ${{ secrets.GITLAB_TOKEN }}
