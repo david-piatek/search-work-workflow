@@ -2,6 +2,9 @@ replicaCount:
   backend: 1
   frontend: 1
 
+imagePullSecrets:
+  - name: gitlab-registry
+
 image:
   backend:
     repository: registry.gitlab.com/dav.piatek/job-search-workflow/job-search-backend
@@ -23,11 +26,13 @@ service:
     targetPort: 80
 
 ingress:
-  enabled: false
-  className: ""
-  annotations: {}
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hosts:
-    - host: job-search.example.com
+    - host: job-search-workflow.draw-me-the-moon.fr
       paths:
         - path: /api
           pathType: Prefix
@@ -35,7 +40,10 @@ ingress:
         - path: /
           pathType: Prefix
           backend: frontend
-  tls: []
+  tls:
+    - secretName: job-search-workflow-tls
+      hosts:
+        - job-search-workflow.draw-me-the-moon.fr
 
 resources:
   backend:
@@ -57,6 +65,8 @@ env:
   backend:
     NODE_ENV: production
     PORT: "3001"
+  frontend:
+    VITE_API_URL: "http://job-search-workflow-backend:3001"
 
 healthCheck:
   backend:

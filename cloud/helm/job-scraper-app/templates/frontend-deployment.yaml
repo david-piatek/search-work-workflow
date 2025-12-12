@@ -18,6 +18,10 @@ spec:
         app: {{ .Release.Name }}
         component: frontend
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - name: frontend
         image: "{{ .Values.image.frontend.repository }}:{{ .Values.image.frontend.tag }}"
@@ -26,6 +30,9 @@ spec:
         - name: http
           containerPort: {{ .Values.service.frontend.targetPort }}
           protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: {{ .Release.Name }}-config
         livenessProbe:
           httpGet:
             path: {{ .Values.healthCheck.frontend.path }}

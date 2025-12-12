@@ -18,6 +18,10 @@ spec:
         app: {{ .Release.Name }}
         component: backend
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - name: backend
         image: "{{ .Values.image.backend.repository }}:{{ .Values.image.backend.tag }}"
@@ -26,11 +30,9 @@ spec:
         - name: http
           containerPort: {{ .Values.service.backend.targetPort }}
           protocol: TCP
-        env:
-        {{- range $key, $value := .Values.env.backend }}
-        - name: {{ $key }}
-          value: {{ $value | quote }}
-        {{- end }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Release.Name }}-config
         livenessProbe:
           httpGet:
             path: {{ .Values.healthCheck.backend.path }}
