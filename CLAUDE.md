@@ -16,3 +16,10 @@ When the trigger branches are changed to "disabled-never-run" in .github/workflo
 Then no CI jobs should run on push or pull_request events to main or develop
 And GitHub Actions minutes should be preserved
 And the workflow remains available for future reactivation by restoring branches to main and develop
+
+Scenario: Fix GitLab Container Registry path for Docker push
+Given the GitLab project is located at "dav.piatek/job-search-workflow"
+And the Container Registry requires the full project path
+When the REGISTRY variable is set to "registry.gitlab.com/dav.piatek/job-search-workflow"
+Then Docker images can be pushed successfully to the GitLab Container Registry
+And the registry path matches the project structure

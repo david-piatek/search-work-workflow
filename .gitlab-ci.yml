@@ -7,7 +7,7 @@ stages:
   - deploy
 
 variables:
-  DOCKER_REGISTRY: registry.gitlab.com/dav.piatek
+  DOCKER_REGISTRY: registry.gitlab.com/dav.piatek/job-search-workflow
   ARGOCD_SERVER: argocd.draw-me-the-moon.fr
   ARGOCD_APP_NAME: job-search
   DOCKER_TLS_CERTDIR: "/certs"

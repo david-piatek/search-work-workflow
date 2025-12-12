@@ -2,7 +2,7 @@
 # Docker Bake configuration for multi-target builds
 
 variable "REGISTRY" {
-  default = "registry.gitlab.com/dav.piatek"
+  default = "registry.gitlab.com/dav.piatek/job-search-workflow"
 }
 
 variable "TAG" {
