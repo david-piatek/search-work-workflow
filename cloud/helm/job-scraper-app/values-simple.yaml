@@ -60,11 +60,25 @@ resources:
     requests:
       cpu: 100m
       memory: 64Mi
+  postgres:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+postgres:
+  database: jobscraper
+  username: admin
+  password: admin123
+  storage: 5Gi
 
 env:
   backend:
     NODE_ENV: production
     PORT: "3001"
+    DATABASE_URL: "postgresql://admin:admin123@job-search-workflow-postgres:5432/jobscraper"
   frontend:
     VITE_API_URL: "http://job-search-workflow-backend:3001"
 
