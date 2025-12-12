@@ -12,10 +12,7 @@ export class HostingController {
   @Get(':siteName')
   @ApiOperation({ summary: 'Serve a hosted static site' })
   @ApiParam({ name: 'siteName', description: 'Site filename without extension' })
-  async serveSite(
-    @Param('siteName') siteName: string,
-    @Res() res: Response,
-  ): Promise<void> {
+  async serveSite(@Param('siteName') siteName: string, @Res() res: Response): Promise<void> {
     const sitePath = this.hostingService.getSitePath(siteName);
 
     if (!existsSync(sitePath)) {

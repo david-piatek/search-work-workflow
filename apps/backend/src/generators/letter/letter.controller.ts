@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  Param,
-  Res,
-  HttpStatus,
-  Logger,
-} from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Res, HttpStatus, Logger } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { LetterService, LetterData } from './letter.service';
@@ -36,17 +27,8 @@ export class LetterController {
 
   @Get('download/:filename')
   @ApiOperation({ summary: 'Download a generated letter' })
-  async downloadLetter(
-    @Res() res: Response,
-    @Param('filename') filename: string,
-  ) {
-    const filePath = join(
-      process.cwd(),
-      '..',
-      'letter-generator',
-      'output',
-      filename,
-    );
+  async downloadLetter(@Res() res: Response, @Param('filename') filename: string) {
+    const filePath = join(process.cwd(), '..', 'letter-generator', 'output', filename);
 
     if (!existsSync(filePath)) {
       return res.status(HttpStatus.NOT_FOUND).json({

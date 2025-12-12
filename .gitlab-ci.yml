@@ -30,6 +30,7 @@ docker-build:
     - export COMMIT_SHA=$CI_COMMIT_SHORT_SHA
     - export BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
     - export REGISTRY=$DOCKER_REGISTRY
+    - export BUILDX_BAKE_ENTITLEMENTS_FS=0
     - docker context create builder-context || true
     - docker buildx create --use --name builder builder-context || docker buildx use builder
     - docker buildx bake -f cloud/docker/docker-bake.hcl prod --push

@@ -27,7 +27,7 @@
 
   async function createCompany() {
     if (!newCompany.slug || !newCompany.url) {
-      error = 'Veuillez remplir les champs slug et URL de l\'offre (le nom est optionnel)';
+      error = "Veuillez remplir les champs slug et URL de l'offre (le nom est optionnel)";
       return;
     }
 
@@ -92,8 +92,8 @@ QR Code pour accès rapide: ${qrUrl}`;
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           data: qrUrl,
-          size: 300
-        })
+          size: 300,
+        }),
       });
 
       if (!response.ok) {
@@ -121,6 +121,12 @@ QR Code pour accès rapide: ${qrUrl}`;
     selectedCompany = null;
     emailTemplate = '';
   }
+
+  function handleKeydown(event) {
+    if (event.key === 'Escape') {
+      closeEmailTemplate();
+    }
+  }
 </script>
 
 <div class="company-qr-manager">
@@ -133,11 +139,7 @@ QR Code pour accès rapide: ${qrUrl}`;
   <div class="section">
     <h3>Ajouter une offre</h3>
     <div class="form-group">
-      <input
-        type="text"
-        bind:value={newCompany.name}
-        placeholder="Nom de l'offre (optionnel)"
-      />
+      <input type="text" bind:value={newCompany.name} placeholder="Nom de l'offre (optionnel)" />
       <input
         type="text"
         bind:value={newCompany.slug}
@@ -145,14 +147,9 @@ QR Code pour accès rapide: ${qrUrl}`;
         pattern="[a-z0-9-]+"
         required
       />
-      <input
-        type="url"
-        bind:value={newCompany.url}
-        placeholder="URL de l'offre *"
-        required
-      />
+      <input type="url" bind:value={newCompany.url} placeholder="URL de l'offre *" required />
       <button on:click={createCompany} disabled={loading}>
-        {loading ? 'Création...' : 'Créer l\'offre'}
+        {loading ? 'Création...' : "Créer l'offre"}
       </button>
     </div>
 
@@ -175,9 +172,7 @@ QR Code pour accès rapide: ${qrUrl}`;
                 <td class="company-name">{company.name || 'Sans nom'}</td>
                 <td class="company-slug"><code>{company.slug}</code></td>
                 <td class="company-action">
-                  <a href="/{company.slug}" class="btn-page">
-                    🔗 Voir la page
-                  </a>
+                  <a href="/{company.slug}" class="btn-page"> 🔗 Voir la page </a>
                 </td>
                 <td class="company-url">
                   <a href={company.url} target="_blank" rel="noopener noreferrer">
@@ -199,8 +194,18 @@ QR Code pour accès rapide: ${qrUrl}`;
   </div>
 
   {#if selectedCompany}
-    <div class="modal-overlay" on:click={closeEmailTemplate}>
-      <div class="modal-content" on:click|stopPropagation>
+    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+    <div
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      on:click={closeEmailTemplate}
+      on:keydown={handleKeydown}
+    >
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+      <div class="modal-content" role="document" tabindex="-1" on:click|stopPropagation>
         <div class="modal-header">
           <h3>Template Email - {selectedCompany.name || selectedCompany.slug}</h3>
           <button class="close-btn" on:click={closeEmailTemplate}>✕</button>
@@ -221,17 +226,12 @@ QR Code pour accès rapide: ${qrUrl}`;
           </div>
         </div>
         <div class="modal-footer">
-          <button on:click={copyEmailTemplate} class="primary">
-            📋 Copier le template
-          </button>
-          <button on:click={closeEmailTemplate} class="secondary">
-            Fermer
-          </button>
+          <button on:click={copyEmailTemplate} class="primary"> 📋 Copier le template </button>
+          <button on:click={closeEmailTemplate} class="secondary"> Fermer </button>
         </div>
       </div>
     </div>
   {/if}
-
 </div>
 
 <style>
@@ -282,17 +282,7 @@ QR Code pour accès rapide: ${qrUrl}`;
     gap: 1rem;
   }
 
-  .button-group {
-    display: flex;
-    gap: 0.75rem;
-  }
-
-  .button-group button {
-    flex: 1;
-  }
-
   input,
-  select,
   textarea {
     width: 100%;
     padding: 0.85rem 1rem;
@@ -310,7 +300,6 @@ QR Code pour accès rapide: ${qrUrl}`;
   }
 
   input:focus,
-  select:focus,
   textarea:focus {
     outline: none;
     border-color: #646cff;
@@ -625,10 +614,6 @@ QR Code pour accès rapide: ${qrUrl}`;
 
     .section {
       padding: 1rem;
-    }
-
-    .button-group {
-      flex-direction: column;
     }
   }
 </style>

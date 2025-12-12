@@ -24,7 +24,7 @@
       offer = await response.json();
       error = '';
     } catch (err) {
-      error = err.message || 'Erreur lors du chargement de l\'offre';
+      error = err.message || "Erreur lors du chargement de l'offre";
       console.error(err);
     } finally {
       loading = false;
@@ -63,7 +63,7 @@
         <div class="offer-content">
           <div class="info-grid">
             <div class="info-section">
-              <label>URL de l'offre</label>
+              <span class="field-label">URL de l'offre</span>
               <a href={offer.url} target="_blank" rel="noopener noreferrer" class="offer-url">
                 {offer.url}
                 <span class="external-icon">↗</span>
@@ -72,42 +72,42 @@
 
             {#if offer.companyName}
               <div class="info-section">
-                <label>Entreprise</label>
+                <span class="field-label">Entreprise</span>
                 <p>{offer.companyName}</p>
               </div>
             {/if}
 
             {#if offer.jobTitle}
               <div class="info-section">
-                <label>Poste</label>
+                <span class="field-label">Poste</span>
                 <p>{offer.jobTitle}</p>
               </div>
             {/if}
 
             {#if offer.salary}
               <div class="info-section">
-                <label>Salaire</label>
+                <span class="field-label">Salaire</span>
                 <p>{offer.salary}</p>
               </div>
             {/if}
 
             {#if offer.remotePolicy}
               <div class="info-section">
-                <label>Télétravail</label>
+                <span class="field-label">Télétravail</span>
                 <p>{offer.remotePolicy}</p>
               </div>
             {/if}
 
             {#if offer.status}
               <div class="info-section">
-                <label>Statut</label>
+                <span class="field-label">Statut</span>
                 <p class="status-badge">{offer.status}</p>
               </div>
             {/if}
 
             {#if offer.cvMatchScore !== null && offer.cvMatchScore !== undefined}
               <div class="info-section">
-                <label>Score de correspondance CV</label>
+                <span class="field-label">Score de correspondance CV</span>
                 <p class="score">{offer.cvMatchScore}%</p>
               </div>
             {/if}
@@ -115,32 +115,28 @@
 
           {#if offer.resumeJob}
             <div class="info-section full-width">
-              <label>Résumé de l'offre</label>
+              <span class="field-label">Résumé de l'offre</span>
               <div class="text-content">{offer.resumeJob}</div>
             </div>
           {/if}
 
           {#if offer.cvPersonalizationHint}
             <div class="info-section full-width">
-              <label>Conseils de personnalisation CV</label>
+              <span class="field-label">Conseils de personnalisation CV</span>
               <div class="text-content">{offer.cvPersonalizationHint}</div>
             </div>
           {/if}
 
           {#if offer.cvMatchScoreReason}
             <div class="info-section full-width">
-              <label>Raison du score de correspondance</label>
+              <span class="field-label">Raison du score de correspondance</span>
               <div class="text-content">{offer.cvMatchScoreReason}</div>
             </div>
           {/if}
 
           <div class="actions">
-            <button on:click={visitOffer} class="primary-btn">
-              🔗 Visiter l'offre
-            </button>
-            <a href="/" class="secondary-btn">
-              ← Retour à la liste
-            </a>
+            <button on:click={visitOffer} class="primary-btn"> 🔗 Visiter l'offre </button>
+            <a href="/" class="secondary-btn"> ← Retour à la liste </a>
           </div>
         </div>
 
@@ -180,8 +176,12 @@
   }
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 
   .loading p {
@@ -293,7 +293,7 @@
     border: 1px solid #e9ecef;
   }
 
-  .info-section label {
+  .field-label {
     display: block;
     margin-bottom: 0.75rem;
     color: #495057;

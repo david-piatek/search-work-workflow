@@ -16,9 +16,7 @@ describe('AppController (e2e)', () => {
   });
 
   it('/scrapers (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/scrapers')
-      .expect(200);
+    return request(app.getHttpServer()).get('/scrapers').expect(200);
   });
 
   afterAll(async () => {
