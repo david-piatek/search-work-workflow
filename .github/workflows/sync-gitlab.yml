@@ -27,5 +27,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global core.hooksPath /dev/null
           git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.com/dav.piatek/job-search-workflow.git
           git push gitlab main --force
