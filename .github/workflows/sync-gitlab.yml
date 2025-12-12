@@ -26,3 +26,4 @@ jobs:
         with:
           gitlab_repository: 'gitlab.com/dav.piatek/job-search-workflow'
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
+          force: true
