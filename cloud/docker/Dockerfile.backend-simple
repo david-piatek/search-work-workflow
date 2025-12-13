@@ -9,9 +9,8 @@ RUN npm install -g pnpm@latest
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/backend/package.json ./apps/backend/package.json
 
-# Install dependencies with cache mount (speeds up reinstalls)
-RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
-    pnpm install --frozen-lockfile
+# Install dependencies (no cache mount to avoid multi-platform conflicts)
+RUN pnpm install --frozen-lockfile
 
 # Copy source code (changes frequently - should be last)
 COPY apps/backend/src ./apps/backend/src
