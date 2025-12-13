@@ -34,10 +34,8 @@ COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
 # Copy nginx configuration
 COPY apps/frontend/nginx-simple.conf /etc/nginx/conf.d/default.conf
 
-# Create non-root user
-RUN addgroup -g 101 -S nginx && \
-    adduser -S nginx -u 101 -G nginx && \
-    chown -R nginx:nginx /usr/share/nginx/html /var/cache/nginx /var/run && \
+# Set permissions for nginx user (user already exists in nginx:alpine)
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chmod -R 755 /usr/share/nginx/html
 
 # Switch to non-root user
