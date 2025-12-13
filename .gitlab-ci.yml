@@ -38,13 +38,13 @@ docker-build:
 
 update-helm-values:
   stage: update-manifest
-  image: alpine/git:latest
+  image: alpine:latest
   only:
     - main
   needs:
     - docker-build
   before_script:
-    - apk add --no-cache yq
+    - apk add --no-cache git yq
     - git config --global user.email "ci@gitlab.com"
     - git config --global user.name "GitLab CI"
   script:
