@@ -107,7 +107,8 @@ And using static image tags like "main" prevents ArgoCD from detecting new image
 When Docker images are tagged with commit SHA using $CI_COMMIT_SHORT_SHA
 And a GitLab CI update-helm-values job updates cloud/helm/job-scraper-app/values.yaml with the new tag
 And the updated Helm values are committed back to Git with [skip ci] to prevent pipeline loops
+And the job uses the built-in CI_JOB_TOKEN to push changes back to GitLab
 And ArgoCD detects the Git change and automatically syncs the new deployment
 Then ArgoCD automatically deploys new images without manual kubectl rollout restart
 And each deployment uses a unique immutable image tag based on the commit SHA
-And the CI_PUSH_TOKEN GitLab variable must be configured with a Personal Access Token having write_repository scope
+And no manual token configuration is required as CI_JOB_TOKEN is automatically provided

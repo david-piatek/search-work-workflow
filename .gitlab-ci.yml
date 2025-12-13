@@ -53,7 +53,7 @@ update-helm-values:
     - yq -i ".image.frontend.tag = \"${CI_COMMIT_SHORT_SHA}\"" cloud/helm/job-scraper-app/values.yaml
     - git add cloud/helm/job-scraper-app/values.yaml
     - git commit -m "ci update image tags to ${CI_COMMIT_SHORT_SHA} [skip ci]"
-    - git push https://oauth2:${CI_PUSH_TOKEN}@gitlab.com/dav.piatek/job-search-workflow.git HEAD:main
+    - git push https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/dav.piatek/job-search-workflow.git HEAD:main
 
 # Deploy to Kubernetes via ArgoCD
 deploy:
