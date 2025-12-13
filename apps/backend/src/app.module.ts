@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GeneratorsModule } from './generators/generators.module';
-import { HostingModule } from './hosting/hosting.module';
 import { JobOffersModule } from './job-offers/job-offers.module';
 
 @Module({
@@ -17,7 +16,6 @@ import { JobOffersModule } from './job-offers/job-offers.module';
       synchronize: true, // Disable in production
     }),
     GeneratorsModule,
-    HostingModule,
     JobOffersModule,
   ],
 })

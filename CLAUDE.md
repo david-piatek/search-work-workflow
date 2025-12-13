@@ -90,3 +90,15 @@ When the -simple suffix is removed from all Docker file names
 And docker-bake.hcl is updated to reference the renamed files
 Then Docker files follow standard naming conventions (Dockerfile.backend, Dockerfile.frontend, compose.yaml)
 And the build configuration correctly references the renamed files
+
+Scenario: Remove upsert endpoint from API
+Given the frontend has a "Relancer Workflow" button that calls POST /api/job-offers/upsert
+And the backend has an upsert route and service method
+When the rerunWorkflow function is removed from the frontend
+And the "Workflow" column is removed from the job offers table
+And the upsert route is removed from JobOffersController
+And the upsert method is removed from JobOffersService
+And related CSS styles for btn-workflow are removed
+Then the application no longer exposes the upsert functionality
+And the frontend builds successfully without errors
+And the backend builds successfully without errors

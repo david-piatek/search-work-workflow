@@ -56,32 +56,6 @@
     }
   }
 
-  async function rerunWorkflow(jobOffer) {
-    try {
-      loading = true;
-      const response = await fetch(`${API_BASE_URL}/job-offers/upsert`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: jobOffer.name,
-          slug: jobOffer.slug,
-          url: jobOffer.url,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Erreur lors du relancement du workflow');
-      }
-
-      alert('✅ Workflow relancé avec succès!');
-    } catch (err) {
-      alert('❌ Erreur: ' + err.message);
-      console.error(err);
-    } finally {
-      loading = false;
-    }
-  }
-
   async function generateEmailTemplate(jobOffer) {
     selectedJobOffer = jobOffer;
     loadingQr = true;
@@ -190,7 +164,6 @@ QR Code pour accès rapide: ${qrUrl}`;
               <th>Page</th>
               <th>URL</th>
               <th>Template Mail</th>
-              <th>Workflow</th>
             </tr>
           </thead>
           <tbody>
@@ -210,11 +183,6 @@ QR Code pour accès rapide: ${qrUrl}`;
                 <td class="jobOffer-action">
                   <button on:click={() => generateEmailTemplate(jobOffer)} class="btn-template">
                     📧 Voir template
-                  </button>
-                </td>
-                <td class="jobOffer-action">
-                  <button on:click={() => rerunWorkflow(jobOffer)} class="btn-workflow">
-                    🔄 Relancer
                   </button>
                 </td>
               </tr>
@@ -515,27 +483,6 @@ QR Code pour accès rapide: ${qrUrl}`;
   .btn-template:hover,
   .btn-page:hover {
     background: #535bf2;
-  }
-
-  .btn-workflow {
-    padding: 0.5rem 1rem;
-    background: #3498db;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-workflow:hover {
-    background: #2980b9;
-  }
-
-  .btn-workflow:disabled {
-    background: #95a5a6;
-    cursor: not-allowed;
   }
 
   .modal-overlay {

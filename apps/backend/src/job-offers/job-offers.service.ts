@@ -101,29 +101,6 @@ export class JobOffersService {
     return await this.jobOfferRepository.save(jobOffer);
   }
 
-  async upsert(createJobOfferDto: CreateJobOfferDto): Promise<JobOffer> {
-    // Chercher l'offre existante par slug
-    const existingOffer = await this.jobOfferRepository.findOne({
-      where: { slug: createJobOfferDto.slug },
-    });
-
-    if (existingOffer) {
-      // Mettre à jour l'offre existante
-      this.logger.log(`Mise à jour de l'offre existante: ${existingOffer.id}`);
-      Object.assign(existingOffer, createJobOfferDto);
-      const updatedOffer = await this.jobOfferRepository.save(existingOffer);
-
-      // Appeler le webhook pour l'offre mise à jour
-      await this.callWebhook(updatedOffer);
-
-      return updatedOffer;
-    } else {
-      // Créer une nouvelle offre (utilise la logique create existante avec webhook)
-      this.logger.log(`Création d'une nouvelle offre: ${createJobOfferDto.slug}`);
-      return await this.create(createJobOfferDto);
-    }
-  }
-
   private async callWebhook(jobOffer: JobOffer): Promise<void> {
     try {
       this.logger.log(`Envoi de l'offre au webhook: ${jobOffer.id}`);
