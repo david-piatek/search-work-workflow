@@ -7,11 +7,11 @@ imagePullSecrets:
 
 image:
   backend:
-    repository: registry.gitlab.com/dav.piatek/job-search-workflow/job-search-backend
+    repository: registry.gitlab.com/david-piatek-oney/job-search-workflow/job-search-backend
     pullPolicy: Always
     tag: "main"
   frontend:
-    repository: registry.gitlab.com/dav.piatek/job-search-workflow/job-search-frontend
+    repository: registry.gitlab.com/david-piatek-oney/job-search-workflow/job-search-frontend
     pullPolicy: Always
     tag: "main"
 

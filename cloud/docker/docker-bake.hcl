@@ -2,7 +2,7 @@
 # Docker Bake configuration for multi-target builds
 
 variable "REGISTRY" {
-  default = "registry.gitlab.com/dav.piatek/job-search-workflow"
+  default = "registry.gitlab.com/david-piatek-oney/job-search-workflow"
 }
 
 variable "TAG" {
@@ -86,7 +86,7 @@ target "frontend-dev" {
 target "_common" {
   pull = true
   labels = {
-    "org.opencontainers.image.source" = "https://gitlab.com/dav.piatek/job-search-workflow"
+    "org.opencontainers.image.source" = "https://gitlab.com/david-piatek-oney/job-search-workflow"
     "org.opencontainers.image.created" = "${BUILD_DATE}"
     "org.opencontainers.image.revision" = "${COMMIT_SHA}"
   }
