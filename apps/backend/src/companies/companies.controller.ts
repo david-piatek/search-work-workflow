@@ -13,14 +13,14 @@ export class CompaniesController {
     return await this.companiesService.create(createCompanyDto);
   }
 
+  @Post('upsert')
+  async upsert(@Body() createCompanyDto: CreateCompanyDto): Promise<JobOffer> {
+    return await this.companiesService.upsert(createCompanyDto);
+  }
+
   @Get()
   async findAll(): Promise<JobOffer[]> {
     return await this.companiesService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<JobOffer> {
-    return await this.companiesService.findOne(id);
   }
 
   @Get('by-slug/:slug')
@@ -28,17 +28,9 @@ export class CompaniesController {
     return await this.companiesService.findBySlug(slug);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string): Promise<void> {
-    return await this.companiesService.remove(id);
-  }
-
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateCompanyDto: UpdateCompanyDto,
-  ): Promise<JobOffer> {
-    return await this.companiesService.update(id, updateCompanyDto);
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise<JobOffer> {
+    return await this.companiesService.findOne(id);
   }
 
   @Patch('by-slug/:slug')
@@ -49,8 +41,16 @@ export class CompaniesController {
     return await this.companiesService.updateBySlug(slug, updateCompanyDto);
   }
 
-  @Post('upsert')
-  async upsert(@Body() createCompanyDto: CreateCompanyDto): Promise<JobOffer> {
-    return await this.companiesService.upsert(createCompanyDto);
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+  ): Promise<JobOffer> {
+    return await this.companiesService.update(id, updateCompanyDto);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string): Promise<void> {
+    return await this.companiesService.remove(id);
   }
 }
