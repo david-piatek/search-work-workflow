@@ -15,10 +15,9 @@ RUN --mount=type=cache,id=pnpm-frontend,target=/root/.local/share/pnpm/store \
 
 # Copy source code (changes frequently - should be last)
 COPY apps/frontend/src ./apps/frontend/src
-COPY apps/frontend/public ./apps/frontend/public
 COPY apps/frontend/*.config.* ./apps/frontend/
 COPY apps/frontend/index.html ./apps/frontend/
-COPY apps/frontend/tsconfig*.json ./apps/frontend/
+COPY apps/frontend/tsconfig*.json ./apps/frontend/ 2>/dev/null || true
 
 # Build application
 WORKDIR /app/apps/frontend
