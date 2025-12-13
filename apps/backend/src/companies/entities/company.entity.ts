@@ -47,6 +47,9 @@ export class JobOffer {
   @Column({ default: 'new' })
   status: string;
 
+  @Column({ default: false })
+  rerunWorkflow: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 
