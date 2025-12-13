@@ -60,7 +60,7 @@
     selectedCompany = company;
     loadingQr = true;
     const companyName = company.name || company.slug;
-    const qrUrl = `https://job-search.draw-me-the-moon.fr/${company.slug}`;
+    const qrUrl = `https://job-search-workflow.draw-me-the-moon.fr/${company.slug}`;
 
     emailTemplate = `Objet: Candidature spontanée - [Votre poste souhaité]
 
