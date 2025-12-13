@@ -36,7 +36,6 @@ docker-build:
     - docker buildx create --use --name builder builder-context || docker buildx use builder
     - docker buildx bake -f cloud/docker/docker-bake.hcl prod --push
 
-# Update Helm values with new image tags
 update-helm-values:
   stage: update-manifest
   image: alpine/git:latest
@@ -49,11 +48,11 @@ update-helm-values:
     - git config --global user.email "ci@gitlab.com"
     - git config --global user.name "GitLab CI"
   script:
-    - echo "Updating Helm values with tag $CI_COMMIT_SHORT_SHA"
-    - yq eval '.image.backend.tag = strenv(CI_COMMIT_SHORT_SHA)' -i cloud/helm/job-scraper-app/values.yaml
-    - yq eval '.image.frontend.tag = strenv(CI_COMMIT_SHORT_SHA)' -i cloud/helm/job-scraper-app/values.yaml
+    - echo "Updating Helm values with tag ${CI_COMMIT_SHORT_SHA}"
+    - yq -i ".image.backend.tag = \"${CI_COMMIT_SHORT_SHA}\"" cloud/helm/job-scraper-app/values.yaml
+    - yq -i ".image.frontend.tag = \"${CI_COMMIT_SHORT_SHA}\"" cloud/helm/job-scraper-app/values.yaml
     - git add cloud/helm/job-scraper-app/values.yaml
-    - git commit -m "ci: Update image tags to $CI_COMMIT_SHORT_SHA [skip ci]"
+    - git commit -m "ci update image tags to ${CI_COMMIT_SHORT_SHA} [skip ci]"
     - git push https://oauth2:${CI_PUSH_TOKEN}@gitlab.com/dav.piatek/job-search-workflow.git HEAD:main
 
 # Deploy to Kubernetes via ArgoCD
