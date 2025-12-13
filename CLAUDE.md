@@ -43,7 +43,7 @@ Scenario: Create Helm chart for Kubernetes deployment
 Given the application needs to be deployed on Kubernetes via ArgoCD
 When a Helm chart is created at cloud/helm/job-scraper-app
 Then the chart includes Chart.yaml with metadata
-And values-simple.yaml contains configuration for backend and frontend
+And values.yaml contains configuration for backend and frontend
 And templates include deployment and service manifests for both components
 And the chart is ready for ArgoCD synchronization
 
@@ -100,3 +100,14 @@ And the backend upsert endpoint creates or updates the offer and calls the n8n w
 Then users can re-trigger the n8n workflow for any job offer
 And the webhook at https://n8n.draw-me-the-moon.fr/webhook/58fc3205-46d2-4492-b75e-02dc5eed601a receives the job offer data
 And the application builds successfully with the new functionality
+
+Scenario: Implement automatic ArgoCD deployment with dynamic image tags
+Given ArgoCD watches Git repository changes but not Docker registry changes
+And using static image tags like "main" prevents ArgoCD from detecting new image builds
+When Docker images are tagged with commit SHA using $CI_COMMIT_SHORT_SHA
+And a GitLab CI update-helm-values job updates cloud/helm/job-scraper-app/values.yaml with the new tag
+And the updated Helm values are committed back to Git with [skip ci] to prevent pipeline loops
+And ArgoCD detects the Git change and automatically syncs the new deployment
+Then ArgoCD automatically deploys new images without manual kubectl rollout restart
+And each deployment uses a unique immutable image tag based on the commit SHA
+And the CI_PUSH_TOKEN GitLab variable must be configured with a Personal Access Token having write_repository scope
