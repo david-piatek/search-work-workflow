@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, Matches, IsUrl, IsOptional } from 'class-validator';
 
-export class CreateCompanyDto {
+export class CreateJobOfferDto {
   @IsString()
   @IsOptional()
   name?: string;

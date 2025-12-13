@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GeneratorsModule } from './generators/generators.module';
 import { HostingModule } from './hosting/hosting.module';
-import { CompaniesModule } from './companies/companies.module';
+import { JobOffersModule } from './job-offers/job-offers.module';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { CompaniesModule } from './companies/companies.module';
     }),
     GeneratorsModule,
     HostingModule,
-    CompaniesModule,
+    JobOffersModule,
   ],
 })
 export class AppModule {}

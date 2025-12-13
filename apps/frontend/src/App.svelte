@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import CompanyQrManager from './components/CompanyQrManager.svelte';
+  import JobOfferManager from './components/JobOfferManager.svelte';
   import OfferPage from './components/OfferPage.svelte';
 
   let currentPath = window.location.pathname;
@@ -34,13 +34,15 @@
       // - lien externe
       // - target="_blank"
       // - modification key pressed (ctrl, cmd, etc.)
-      if (!target ||
-          !target.href ||
-          !target.href.startsWith(window.location.origin) ||
-          target.target === '_blank' ||
-          e.ctrlKey ||
-          e.metaKey ||
-          e.shiftKey) {
+      if (
+        !target ||
+        !target.href ||
+        !target.href.startsWith(window.location.origin) ||
+        target.target === '_blank' ||
+        e.ctrlKey ||
+        e.metaKey ||
+        e.shiftKey
+      ) {
         return;
       }
 
@@ -60,7 +62,7 @@
   {#if slug}
     <OfferPage {slug} />
   {:else}
-    <CompanyQrManager />
+    <JobOfferManager />
   {/if}
 </main>
 

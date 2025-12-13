@@ -2,31 +2,31 @@
   import { onMount } from 'svelte';
   import { API_BASE_URL } from '../lib/api.js';
 
-  let companies = [];
-  let newCompany = { name: '', slug: '', url: '' };
+  let jobOffers = [];
+  let newJobOffer = { name: '', slug: '', url: '' };
   let loading = false;
   let error = '';
-  let selectedCompany = null;
+  let selectedJobOffer = null;
   let emailTemplate = '';
   let qrCodeImage = '';
   let loadingQr = false;
 
   onMount(async () => {
-    await loadCompanies();
+    await loadJobOffers();
   });
 
-  async function loadCompanies() {
+  async function loadJobOffers() {
     try {
-      const response = await fetch(`${API_BASE_URL}/companies`);
-      companies = await response.json();
+      const response = await fetch(`${API_BASE_URL}/job-offers`);
+      jobOffers = await response.json();
     } catch (err) {
-      error = 'Erreur lors du chargement des companies';
+      error = 'Erreur lors du chargement des offres';
       console.error(err);
     }
   }
 
-  async function createCompany() {
-    if (!newCompany.slug || !newCompany.url) {
+  async function createJobOffer() {
+    if (!newJobOffer.slug || !newJobOffer.url) {
       error = "Veuillez remplir les champs slug et URL de l'offre (le nom est optionnel)";
       return;
     }
@@ -35,10 +35,10 @@
     error = '';
 
     try {
-      const response = await fetch(`${API_BASE_URL}/companies`, {
+      const response = await fetch(`${API_BASE_URL}/job-offers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newCompany),
+        body: JSON.stringify(newJobOffer),
       });
 
       if (!response.ok) {
@@ -46,9 +46,9 @@
         throw new Error(errorData.message || 'Erreur lors de la création');
       }
 
-      newCompany = { name: '', slug: '', url: '' };
+      newJobOffer = { name: '', slug: '', url: '' };
       error = '';
-      await loadCompanies();
+      await loadJobOffers();
     } catch (err) {
       error = err.message;
     } finally {
@@ -56,16 +56,16 @@
     }
   }
 
-  async function rerunWorkflow(company) {
+  async function rerunWorkflow(jobOffer) {
     try {
       loading = true;
-      const response = await fetch(`${API_BASE_URL}/companies/upsert`, {
+      const response = await fetch(`${API_BASE_URL}/job-offers/upsert`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: company.name,
-          slug: company.slug,
-          url: company.url,
+          name: jobOffer.name,
+          slug: jobOffer.slug,
+          url: jobOffer.url,
         }),
       });
 
@@ -82,17 +82,17 @@
     }
   }
 
-  async function generateEmailTemplate(company) {
-    selectedCompany = company;
+  async function generateEmailTemplate(jobOffer) {
+    selectedJobOffer = jobOffer;
     loadingQr = true;
-    const companyName = company.name || company.slug;
-    const qrUrl = `https://job-search-workflow.draw-me-the-moon.fr/${company.slug}`;
+    const jobOfferName = jobOffer.name || jobOffer.slug;
+    const qrUrl = `https://job-search-workflow.draw-me-the-moon.fr/${jobOffer.slug}`;
 
     emailTemplate = `Objet: Candidature spontanée - [Votre poste souhaité]
 
 Madame, Monsieur,
 
-Je me permets de vous adresser ma candidature spontanée pour un poste de [Votre poste] au sein de ${companyName}.
+Je me permets de vous adresser ma candidature spontanée pour un poste de [Votre poste] au sein de ${jobOfferName}.
 
 Passionné(e) par [votre domaine], je suis convaincu(e) que mon profil et mes compétences pourraient apporter une valeur ajoutée à votre entreprise.
 
@@ -107,7 +107,7 @@ Dans l'attente de votre retour, je vous prie d'agréer, Madame, Monsieur, l'expr
 [Votre email]
 
 ---
-Site web: ${company.url}
+Site web: ${jobOffer.url}
 QR Code pour accès rapide: ${qrUrl}`;
 
     // Générer le QR code
@@ -144,7 +144,7 @@ QR Code pour accès rapide: ${qrUrl}`;
   }
 
   function closeEmailTemplate() {
-    selectedCompany = null;
+    selectedJobOffer = null;
     emailTemplate = '';
   }
 
@@ -155,7 +155,7 @@ QR Code pour accès rapide: ${qrUrl}`;
   }
 </script>
 
-<div class="company-qr-manager">
+<div class="jobOffer-qr-manager">
   <h2>job-search</h2>
 
   {#if error}
@@ -165,23 +165,23 @@ QR Code pour accès rapide: ${qrUrl}`;
   <div class="section">
     <h3>Ajouter une offre</h3>
     <div class="form-group">
-      <input type="text" bind:value={newCompany.name} placeholder="Nom de l'offre (optionnel)" />
+      <input type="text" bind:value={newJobOffer.name} placeholder="Nom de l'offre (optionnel)" />
       <input
         type="text"
-        bind:value={newCompany.slug}
+        bind:value={newJobOffer.slug}
         placeholder="Slug (ex: mon-offre) *"
         pattern="[a-z0-9-]+"
         required
       />
-      <input type="url" bind:value={newCompany.url} placeholder="URL de l'offre *" required />
-      <button on:click={createCompany} disabled={loading}>
+      <input type="url" bind:value={newJobOffer.url} placeholder="URL de l'offre *" required />
+      <button on:click={createJobOffer} disabled={loading}>
         {loading ? 'Création...' : "Créer l'offre"}
       </button>
     </div>
 
-    {#if companies.length > 0}
-      <div class="companies-table">
-        <h4>Offres existantes ({companies.length})</h4>
+    {#if jobOffers.length > 0}
+      <div class="jobOffers-table">
+        <h4>Offres existantes ({jobOffers.length})</h4>
         <table>
           <thead>
             <tr>
@@ -194,26 +194,26 @@ QR Code pour accès rapide: ${qrUrl}`;
             </tr>
           </thead>
           <tbody>
-            {#each companies as company}
+            {#each jobOffers as jobOffer}
               <tr>
-                <td class="company-name">{company.name || 'Sans nom'}</td>
-                <td class="company-slug"><code>{company.slug}</code></td>
-                <td class="company-action">
-                  <a href="/{company.slug}" class="btn-page"> 🔗 Voir la page </a>
+                <td class="jobOffer-name">{jobOffer.name || 'Sans nom'}</td>
+                <td class="jobOffer-slug"><code>{jobOffer.slug}</code></td>
+                <td class="jobOffer-action">
+                  <a href="/{jobOffer.slug}" class="btn-page"> 🔗 Voir la page </a>
                 </td>
-                <td class="company-url">
-                  <a href={company.url} target="_blank" rel="noopener noreferrer">
-                    {company.url}
+                <td class="jobOffer-url">
+                  <a href={jobOffer.url} target="_blank" rel="noopener noreferrer">
+                    {jobOffer.url}
                     <span class="external-link">↗</span>
                   </a>
                 </td>
-                <td class="company-action">
-                  <button on:click={() => generateEmailTemplate(company)} class="btn-template">
+                <td class="jobOffer-action">
+                  <button on:click={() => generateEmailTemplate(jobOffer)} class="btn-template">
                     📧 Voir template
                   </button>
                 </td>
-                <td class="company-action">
-                  <button on:click={() => rerunWorkflow(company)} class="btn-workflow">
+                <td class="jobOffer-action">
+                  <button on:click={() => rerunWorkflow(jobOffer)} class="btn-workflow">
                     🔄 Relancer
                   </button>
                 </td>
@@ -225,7 +225,7 @@ QR Code pour accès rapide: ${qrUrl}`;
     {/if}
   </div>
 
-  {#if selectedCompany}
+  {#if selectedJobOffer}
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
     <div
       class="modal-overlay"
@@ -239,7 +239,7 @@ QR Code pour accès rapide: ${qrUrl}`;
       <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
       <div class="modal-content" role="document" tabindex="-1" on:click|stopPropagation>
         <div class="modal-header">
-          <h3>Template Email - {selectedCompany.name || selectedCompany.slug}</h3>
+          <h3>Template Email - {selectedJobOffer.name || selectedJobOffer.slug}</h3>
           <button class="close-btn" on:click={closeEmailTemplate}>✕</button>
         </div>
         <div class="modal-body">
@@ -252,7 +252,7 @@ QR Code pour accès rapide: ${qrUrl}`;
             {:else if qrCodeImage}
               <img src={qrCodeImage} alt="QR Code" class="qr-code-preview" />
               <p class="qr-info">
-                URL: https://job-search-workflow.draw-me-the-moon.fr/{selectedCompany.slug}
+                URL: https://job-search-workflow.draw-me-the-moon.fr/{selectedJobOffer.slug}
               </p>
             {:else}
               <p class="qr-error">❌ Erreur lors de la génération du QR code</p>
@@ -269,7 +269,7 @@ QR Code pour accès rapide: ${qrUrl}`;
 </div>
 
 <style>
-  .company-qr-manager {
+  .jobOffer-qr-manager {
     max-width: 100%;
     margin: 0 auto;
     padding: 2rem;
@@ -401,7 +401,7 @@ QR Code pour accès rapide: ${qrUrl}`;
     font-size: 0.95rem;
   }
 
-  .companies-table {
+  .jobOffers-table {
     margin-top: 2rem;
     overflow-x: auto;
   }
@@ -443,7 +443,7 @@ QR Code pour accès rapide: ${qrUrl}`;
     background: #f8f9fa;
   }
 
-  .company-name {
+  .jobOffer-name {
     font-weight: 600;
     color: #2c3e50;
     max-width: 150px;
@@ -452,11 +452,11 @@ QR Code pour accès rapide: ${qrUrl}`;
     text-overflow: ellipsis;
   }
 
-  .company-slug {
+  .jobOffer-slug {
     min-width: 120px;
   }
 
-  .company-slug code {
+  .jobOffer-slug code {
     background: #e9ecef;
     padding: 0.3rem 0.6rem;
     border-radius: 4px;
@@ -466,11 +466,11 @@ QR Code pour accès rapide: ${qrUrl}`;
     border: 1px solid #dee2e6;
   }
 
-  .company-url {
+  .jobOffer-url {
     max-width: 250px;
   }
 
-  .company-url a {
+  .jobOffer-url a {
     color: #646cff;
     text-decoration: none;
     font-weight: 500;
@@ -483,7 +483,7 @@ QR Code pour accès rapide: ${qrUrl}`;
     white-space: nowrap;
   }
 
-  .company-url a:hover {
+  .jobOffer-url a:hover {
     color: #535bf2;
     text-decoration: underline;
   }
@@ -493,7 +493,7 @@ QR Code pour accès rapide: ${qrUrl}`;
     opacity: 0.7;
   }
 
-  .company-action {
+  .jobOffer-action {
     text-align: center;
   }
 
@@ -659,7 +659,7 @@ QR Code pour accès rapide: ${qrUrl}`;
   }
 
   @media (max-width: 768px) {
-    .company-qr-manager {
+    .jobOffer-qr-manager {
       padding: 1rem;
     }
 

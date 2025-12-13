@@ -1,6 +1,6 @@
 import { IsString, IsOptional, IsNumber, Min, Max } from 'class-validator';
 
-export class UpdateCompanyDto {
+export class UpdateJobOfferDto {
   @IsString()
   @IsOptional()
   companyName?: string;

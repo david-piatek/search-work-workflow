@@ -65,3 +65,21 @@ Then pnpm dependencies are cached and reused between builds
 And only changed source code triggers new builds
 And build times are minimized in CI
 And image sizes are reduced with multi-stage builds and cleanup
+
+Scenario: Fix NestJS route ordering to prevent path matching issues
+Given the CompaniesController has routes for both specific paths and parameterized paths
+When specific routes like /upsert are placed before parameterized routes like /:id
+Then NestJS correctly matches /upsert requests to the upsert handler
+And parameterized routes do not incorrectly capture specific path names
+And all API endpoints function as expected
+
+Scenario: Rename company references to job-offer throughout the codebase
+Given the codebase uses "company" and "companies" terminology
+When all references are renamed to "job-offer" and "job-offers" respectively
+And the backend module directory is renamed from companies to job-offers
+And DTOs are renamed from CreateCompanyDto to CreateJobOfferDto
+And the API controller route is changed from /api/companies to /api/job-offers
+And frontend components are updated to use the new endpoint
+Then the terminology consistently reflects the purpose of tracking job offers
+And all API calls use the /api/job-offers endpoint
+And the codebase builds successfully with the new naming

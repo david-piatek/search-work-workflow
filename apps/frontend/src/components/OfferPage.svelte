@@ -15,7 +15,7 @@
   async function loadOffer() {
     try {
       loading = true;
-      const response = await fetch(`${API_BASE_URL}/companies/by-slug/${slug}`);
+      const response = await fetch(`${API_BASE_URL}/job-offers/by-slug/${slug}`);
 
       if (!response.ok) {
         throw new Error('Offre non trouvée');
