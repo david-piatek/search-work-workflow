@@ -1,20 +1,17 @@
 replicaCount:
   backend: 1
   frontend: 1
-
 imagePullSecrets:
   - name: gitlab-registry
-
 image:
   backend:
     repository: registry.gitlab.com/dav.piatek/job-search-workflow/job-search-backend
     pullPolicy: Always
-    tag: "main"
+    tag: "92588f24"
   frontend:
     repository: registry.gitlab.com/dav.piatek/job-search-workflow/job-search-frontend
     pullPolicy: Always
-    tag: "main"
-
+    tag: "92588f24"
 service:
   backend:
     type: ClusterIP
@@ -24,7 +21,6 @@ service:
     type: ClusterIP
     port: 80
     targetPort: 8080
-
 ingress:
   enabled: true
   className: "traefik"
@@ -44,7 +40,6 @@ ingress:
     - secretName: job-search-workflow-tls
       hosts:
         - job-search-workflow.draw-me-the-moon.fr
-
 resources:
   backend:
     limits:
@@ -67,14 +62,12 @@ resources:
     requests:
       cpu: 250m
       memory: 256Mi
-
 postgres:
   host: nextcloud-postgresql.nextcloud.svc.cluster.local
   port: 5432
   database: jobsearch
   username: postgres
   password: gosPHbibCH
-
 env:
   backend:
     NODE_ENV: production
@@ -82,7 +75,6 @@ env:
     DATABASE_URL: "postgresql://postgres:gosPHbibCH@nextcloud-postgresql.nextcloud.svc.cluster.local:5432/jobsearch"
   frontend:
     VITE_API_URL: "http://job-search-workflow-backend:3001"
-
 healthCheck:
   backend:
     path: /health
