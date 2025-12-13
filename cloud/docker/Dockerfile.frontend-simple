@@ -35,7 +35,9 @@ COPY apps/frontend/nginx-simple.conf /etc/nginx/conf.d/default.conf
 
 # Set permissions for nginx user (user already exists in nginx:alpine)
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
-    chmod -R 755 /usr/share/nginx/html
+    chmod -R 755 /usr/share/nginx/html && \
+    chown -R nginx:nginx /var/cache/nginx /var/run && \
+    chmod -R 755 /var/cache/nginx /var/run
 
 # Switch to non-root user
 USER nginx
