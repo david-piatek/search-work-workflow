@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, Matches, IsUrl, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsNotEmpty, Matches, IsUrl, IsOptional } from 'class-validator';
 
 export class CreateCompanyDto {
   @IsString()
@@ -15,8 +15,4 @@ export class CreateCompanyDto {
   @IsUrl()
   @IsNotEmpty()
   url: string;
-
-  @IsOptional()
-  @IsBoolean()
-  rerunWorkflow?: boolean;
 }
