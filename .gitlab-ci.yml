@@ -50,8 +50,8 @@ update-helm-values:
     - git config --global user.name "GitLab CI"
   script:
     - echo "Updating Helm values with tag $CI_COMMIT_SHORT_SHA"
-    - yq eval ".image.backend.tag = \"$CI_COMMIT_SHORT_SHA\"" -i cloud/helm/job-scraper-app/values.yaml
-    - yq eval ".image.frontend.tag = \"$CI_COMMIT_SHORT_SHA\"" -i cloud/helm/job-scraper-app/values.yaml
+    - yq eval '.image.backend.tag = strenv(CI_COMMIT_SHORT_SHA)' -i cloud/helm/job-scraper-app/values.yaml
+    - yq eval '.image.frontend.tag = strenv(CI_COMMIT_SHORT_SHA)' -i cloud/helm/job-scraper-app/values.yaml
     - git add cloud/helm/job-scraper-app/values.yaml
     - git commit -m "ci: Update image tags to $CI_COMMIT_SHORT_SHA [skip ci]"
     - git push https://oauth2:${CI_PUSH_TOKEN}@gitlab.com/dav.piatek/job-search-workflow.git HEAD:main
